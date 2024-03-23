@@ -41,7 +41,7 @@ class Lexer
       when "enum"
         @enums[block_name].add_entry(EnumEntry.new(sanitized_line))
       when "model"
-        match = sanitized_line.match(/(\w+)\s+(\w+)\s+(.*)/)
+        match = sanitized_line.match(/(\w+)\s+(\w+)\s*(.*)?/)
 
         if match.nil?
           attempt_to_close_block(line)
@@ -106,7 +106,10 @@ class Lexer
   public
 
   def to_s
-    "Enums: #{@enums}\nModels: #{@models}"
+    enums = @enums.map { |k, v| v.to_s }.join("\n")
+    models = @models.map { |k, v| v.to_s }.join("\n")
+
+    "enums:\n#{enums}\nmodels:\n#{models}"
   end
 
   def inspect

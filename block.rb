@@ -14,7 +14,12 @@ class Block
   end
 
   def to_s
-    "#{@name} #{@type} #{@entries}"
+    head = Helpers.indent("name: #{@name}\ntype: #{@type}\nentries:")
+    tail = Helpers.indent(@entries.map { |k, v| v.to_s}.join(
+      @type == "enum" ? "\n" : "\n\n"
+    ))
+
+    "#{head}\n#{tail}"
   end
 
   def inspect
@@ -45,7 +50,7 @@ class EnumEntry < BlockEntry
   end
 
   def to_s
-    @name
+    Helpers.indent(@name)
   end
 
   def inspect
@@ -73,7 +78,16 @@ class ModelEntry < BlockEntry
   end
 
   def to_s
-    "#{@name}(#{@type}, #{@directives})"
+    head = Helpers.indent("name: #{@name}\ntype: #{@type}")
+
+    if @directives.empty?
+      return head
+    end
+   
+    head = Helpers.indent("name: #{@name}\ntype: #{@type}\ndirectives:")
+    tail = Helpers.indent(@directives.map { |d| d.to_s }.join("\n"), 2)
+
+    "#{head}\n#{tail}"
   end
 
   def inspect
@@ -85,7 +99,7 @@ class Directive
   attr_accessor :name, :args
 
   def initialize(str)
-    match = str.strip.match(/(\w+)\((.*)\)?/)
+    match = str.strip.match(/(\w+)\((.*)\)/)
     args = nil
 
     if match.nil?
@@ -105,7 +119,7 @@ class Directive
   end
 
   def to_s
-    "#{@name}(#{@args})"
+    "#{@name}: #{@args}"
   end
 
   def inspect
