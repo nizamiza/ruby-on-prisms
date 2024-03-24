@@ -1,5 +1,7 @@
-require "./block"
-require "./helpers"
+require "./lexer/block"
+require "./lexer/enum_entry"
+require "./lexer/model_entry"
+require "./shared/util"
 
 class Lexer
   attr_accessor :path, :enums, :models
@@ -48,7 +50,7 @@ class Lexer
           return
         end
           
-        identifier, type, directives = Helpers.strip_all(match.captures)
+        identifier, type, directives = Util.strip_all(match.captures)
 
         @models[block_name].add_entry(
           ModelEntry.new(identifier, type, directives)
@@ -82,7 +84,7 @@ class Lexer
       return
     end
 
-    keyword, identifier, block_start = Helpers.strip_all(match.captures)
+    keyword, identifier, block_start = Util.strip_all(match.captures)
     block_start = block_start == "{"
 
     if !block_start
